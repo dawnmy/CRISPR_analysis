@@ -14,9 +14,11 @@ from Bio.SeqRecord import SeqRecord
 
 @click.command()
 @click.argument('crt', type=click.Path(exists=True))
-@click.option('--inseq', type=click.Path(exists=True), default=None, help='Input fasta file with CRISPR regions [Required when outseq is enabled]')
+@click.option('--inseq', type=click.Path(exists=True), default=None, 
+              help='Input fasta file with CRISPR regions [Required when outseq is enabled]')
 @click.option('-o', '--output', type=str, required=True, help='The output file name')
-@click.option('--outseq', type=str, default=None, help='Output fasta file of CRISPR regions and their down and up-stream sequences.')
+@click.option('--outseq', type=str, default=None, 
+              help='Output fasta file of CRISPR regions and their down and up-stream sequences.')
 def crispr_parser(crt, inseq, output, outseq):
     """convert the CRT output of CRISPR loci into tab-delimited file (similar to GFF/GTF)
 
@@ -29,7 +31,8 @@ def crispr_parser(crt, inseq, output, outseq):
     #id_pattern = re.compile(r'^CRISPR\s[0-9]+')
     if outseq is not None: 
         if inseq is None:
-            raise Exception('Please specify the fasta file for genome sequence if you need to output the sequences of CRISPR and flanking regions')
+            raise Exception('Please specify the fasta file for genome sequence if you need to \
+            output the sequences of CRISPR and flanking regions')
         else:
             output_fasta = True
     else:
@@ -109,8 +112,12 @@ def extract_crispr_flanking(seq_region_dict, seq, outseq_file):
         upstream = seq_record.seq[start-1000:start]
         downstream = seq_record.seq[end:end+1000]
         gene_record = SeqRecord(gene_region, seq_name, description='CRISPR region')
-        upstream_record = SeqRecord(upstream, '{}_upstream_1kb'.format(seq_name), description='CRISPR upstream 1kb')
-        downstream_record = SeqRecord(downstream, '{}_downstream_1kb'.format(seq_name), description='CRISPR downstream 1kb')
+        upstream_record = SeqRecord(upstream, 
+                                    '{}_upstream_1kb'.format(seq_name), 
+                                    description='CRISPR upstream 1kb')
+        downstream_record = SeqRecord(downstream, 
+                                      '{}_downstream_1kb'.format(seq_name), 
+                                      description='CRISPR downstream 1kb')
         gene_and_flanking.extend([gene_record, upstream_record, downstream_record])
 
     SeqIO.write(gene_and_flanking, outseq_file, "fasta")
